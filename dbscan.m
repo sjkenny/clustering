@@ -7,10 +7,10 @@
 
 addpath ../common  %add path for OpenMolList/WriteMolBinNXcYcZc
 
-MinPts = 10;
+MinPts = 30;
 eps = 0.2;
 
-[r,filehead]=OpenMolList;
+[r,filehead]=OpenMolListTxt;
 
 x=r.xc;
 y=r.yc;
