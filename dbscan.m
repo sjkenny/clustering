@@ -8,7 +8,7 @@
 addpath ../common  %add path for OpenMolList/WriteMolBinNXcYcZc
 
 MinPts = 30;
-eps = 0.2;
+eps = 0.2;d
 
 [r,filehead]=OpenMolListTxt;
 
@@ -30,8 +30,9 @@ ind_out_vec = nrows*(loc(:,2)-1)+loc(:,1);
 [ind_out_vec_sort sorted_ind] = sort(ind_out_vec);
 cluster=0;
 ClusterCount = 1;
+
 for i = 1:numel(ClusterInd)
-    if ~ClusterInd(i)
+    if ClusterInd(i)==0
         [out_list] = ExpandCluster(ind_out_vec_sort,sorted_ind,nrows,x,y,i,eps,MinPts);
         u=unique(out_list);
         
@@ -77,7 +78,7 @@ r.frame=r.frame.*0;
 outfile=sprintf('%s-dbscan-eps_%d-MinPts_%d.bin',filehead,eps,MinPts);
 r.frame=ClusterInd_change;
 WriteMolBinNXcYcZc(r,outfile);
-
+%%
 % plot(x,y,'k.')
 % hold on
 % plot(x(u),y(u),'m.')

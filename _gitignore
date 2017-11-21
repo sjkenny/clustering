@@ -23,6 +23,8 @@ $RECYCLE.BIN/
 
 # OSX
 # =========================
+*.asv
+*.bin
 
 .DS_Store
 .AppleDouble

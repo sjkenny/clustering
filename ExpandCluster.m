@@ -15,17 +15,19 @@ if seeds_num<MinPts
     seeds = [];
 end
 cluster(seeds) = 1;
-b = find(seeds==mol_ind);
+% b = find(seeds==mol_ind);
 %delete first seed from queue
-seeds(b) = [];
+seeds(seeds==mol_ind) = [];
+%iterate through seeds until empty
 while ~isempty(seeds)
      count = count+1;
 %     length(seeds);
     
     sresult = RegionQuery(ind_out_vec_sort,sorted_ind,nrows,x,y,seeds(1),eps);
     if length(sresult)>=MinPts
-        [seeds_append] = find(cluster(sresult)==0);
-        seeds_append = sresult(seeds_append);
+%         [seeds_append] = find(cluster(sresult)==0);
+% add seeds to cluster that haven't already been checked
+        seeds_append = sresult(cluster(sresult)==0);
         seeds = cat(1,seeds_append,seeds);
     end
     
@@ -34,21 +36,24 @@ while ~isempty(seeds)
 %     u = unique(seeds_append);
 
     cluster(sresult)=1;
-    seeds(1) = [];
-    ind_out = find(cluster==1);
+    
+%     ind_out = find(cluster==1);
     
 %debug
+%     clf
 %     plot(x,y,'k.')
 %     hold on
-%     plot(x(ind_out),y(ind_out),'m.')
-%     plot(x(seeds_append),y(seeds_append),'b.')
+%     plot(x(sresult),y(sresult),'m.')
+%     plot(x(seeds(1)),y(seeds(1)),'b+')
 %     keyboard
+
+    seeds(1) = [];
 %     file_out = sprintf('ss\\outpng_%d.png',count)
 %         saveas(gcf,file_out)
 
 end
 ind_out = find(cluster==1);
-%plotting
+% plotting
 % plot(x,y,'k.')
 % hold on
 % plot(x(ind_out),y(ind_out),'m.')
@@ -56,4 +61,5 @@ ind_out = find(cluster==1);
 % % plot(x(seeds),y(seeds),'b.')
 % 
 % hold off
+% keyboard
                 

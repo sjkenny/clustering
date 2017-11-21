@@ -6,16 +6,16 @@ function [out_list] = RegionQuery(ind_out_vec_sort,sorted_ind,nrows,x,y,mol_ind,
                                     %sorted vectorized bins, nrows, xy full
                                     %lists, index of molecule, eps
 %find bin containing point
-idx = find(sorted_ind==mol_ind);
-u = ind_out_vec_sort(idx);
+% idx = find(sorted_ind==mol_ind);
+u = ind_out_vec_sort(sorted_ind==mol_ind);
 %find bin indices of 3x3 box
 
 ind_to_find = [u u+1 u-1 ...
                u-nrows u-nrows+1 u-nrows-1 ...
                u+nrows u+nrows+1 u+nrows-1 ...
                ];
-[b,c] = findInSorted(ind_out_vec_sort,u);
-ind_use_mol = sorted_ind(b:c);           
+% [b,c] = findInSorted(ind_out_vec_sort,u);
+% ind_use_mol = sorted_ind(b:c);           
 ind_use = [];
 for j=1:9
     [b,c] = findInSorted(ind_out_vec_sort,ind_to_find(j));
@@ -33,7 +33,14 @@ dist = sqrt(((bsxfun(@minus,xlist,x(mol_ind))).^2+ ...
 (bsxfun(@minus,ylist,y(mol_ind))).^2));
 
 %nearest neighbor indices
-ind_out = find(dist<dist_thresh);
-out_list = ind_use(ind_out);
-
-
+% ind_out = find(dist<dist_thresh);
+out_list = ind_use(dist<dist_thresh);
+%don't count current molecule
+out_list = out_list(2:end);
+%plotting
+% clf
+% plot(x,y,'k.')
+% hold on
+% plot(x(mol_ind),y(mol_ind),'b+')
+% plot(x(out_list),y(out_list),'m.')
+% keyboard

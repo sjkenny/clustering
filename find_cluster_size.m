@@ -9,39 +9,35 @@
 
 
 quantile = 0.95;
+PxSize=160;
 
 r = OpenMolList;
-CatInd_centers=2;
-center_ind = find(r.cat==CatInd_centers);
-x_centers = r.xc(center_ind);
-y_centers = r.yc(center_ind);
+CatInd_use = 1;
+CatInd = find(r.cat==CatInd_use);
+center_max = max(r.frame(CatInd));
+
+x=r.xc(CatInd)*PxSize;
+y=r.yc(CatInd)*PxSize;
+z=r.zc(CatInd);
 
 
-r.frame(center_ind)=0;
-out_radius = zeros(numel(x_centers),1);
-out_avgZ = zeros(numel(x_centers),1);
-out_stdZ = zeros(numel(x_centers),1);
-out_num = zeros(numel(x_centers),1);
+for i=1:center_max
+    
+    idx_use = find(r.frame(CatInd)==i);
+    num = numel(idx_use);
+    x_use = x(idx_use);
+    y_use = y(idx_use);
+    x_center = mean(x_use);
+    y_center = mean(y_use);
 
-sdx = zeros(numel(x_centers),1);
-sdy = zeros(numel(x_centers),1);
+    dist2 = sqrt(((bsxfun(@minus,x_use,x_center)).^2+ ...
+    (bsxfun(@minus,y_use,y_center)).^2));
 
-for i=1:numel(x_centers)
-    idx_use = find(r.frame==i);
-    x_center = x_centers(i);
-    y_center = y_centers(i);
-    x_use = r.xc(idx_use);
-    y_use = r.yc(idx_use);
-    z_use = r.zc(idx_use);
-    x_shift = x_use-x_center;
-    y_shift = y_use-y_center;
-    [theta,radius] = cart2pol(x_shift,y_shift);
-    radius_sort = sort(radius);
-    radius_num = numel(radius_sort);
-    out_radius(i) = radius_sort(round(radius_num*quantile));
-    out_avgZ(i) = mean(z_use);
-    out_stdZ(i) = std(z_use);
-    out_num(i) = numel(idx_use);
+    dist_sort = sort(dist2);
+    radius_num = numel(dist_sort);
+    out_radius(i) = dist_sort(round(radius_num*quantile));
+
+    out_num(i) = num;
     sdx(i) = std(x_use);
     sdy(i) = std(y_use);
 end
@@ -54,7 +50,11 @@ end
 % plot(x_use,y_use,'k.')
 % plot(xcircle,ycircle)
 
-
+small_list = find(out_radius<100);
+small_mean = mean(out_num(small_list));
+bins = 1:40;
+[count edges mid loc] = histcn(out_num(small_list), bins);
+plot(bins,count)
 
 %plot result
 hist(out_radius,20)
